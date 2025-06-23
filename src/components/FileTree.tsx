@@ -6,9 +6,19 @@ interface FileTreeProps {
   fileStructure: FileItem;
   onFileSelect: (file: FileItem) => void;
   selectedFile: FileItem | null;
+  focusedIndex: number;
+  onFocusChange: (index: number) => void;
+  flatFileList: FileItem[];
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ fileStructure, onFileSelect, selectedFile }) => {
+const FileTree: React.FC<FileTreeProps> = ({ 
+  fileStructure, 
+  onFileSelect, 
+  selectedFile, 
+  focusedIndex, 
+  onFocusChange,
+  flatFileList 
+}) => {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set(['C:\\RESUME']));
 
   const toggleFolder = (folderName: string) => {
@@ -21,11 +31,13 @@ const FileTree: React.FC<FileTreeProps> = ({ fileStructure, onFileSelect, select
     setExpandedFolders(newExpanded);
   };
 
-  const renderFileItem = (item: FileItem, depth: number = 0): JSX.Element => {
+  const renderFileItem = (item: FileItem, depth: number = 0, itemIndex: number): JSX.Element => {
     const isSelected = selectedFile?.name === item.name;
+    const isFocused = focusedIndex === itemIndex;
     const isExpanded = expandedFolders.has(item.name);
     
     const handleClick = () => {
+      onFocusChange(itemIndex);
       if (item.type === 'folder') {
         toggleFolder(item.name);
       } else {
@@ -36,7 +48,7 @@ const FileTree: React.FC<FileTreeProps> = ({ fileStructure, onFileSelect, select
     return (
       <div key={item.name} className="file-tree-item">
         <div
-          className={`file-item ${isSelected ? 'selected' : ''} ${item.type}`}
+          className={`file-item ${isSelected ? 'selected' : ''} ${isFocused ? 'focused' : ''} ${item.type}`}
           style={{ paddingLeft: `${depth * 20 + 8}px` }}
           onClick={handleClick}
         >
@@ -51,12 +63,17 @@ const FileTree: React.FC<FileTreeProps> = ({ fileStructure, onFileSelect, select
         
         {item.type === 'folder' && isExpanded && item.children && (
           <div className="folder-children">
-            {item.children.map(child => renderFileItem(child, depth + 1))}
+            {item.children.map((child, childIndex) => {
+              const childItemIndex = flatFileList.findIndex(flatItem => flatItem.name === child.name);
+              return renderFileItem(child, depth + 1, childItemIndex);
+            })}
           </div>
         )}
       </div>
     );
   };
+
+  const rootItemIndex = flatFileList.findIndex(item => item.name === fileStructure.name);
 
   return (
     <div className="file-tree-panel">
@@ -65,7 +82,7 @@ const FileTree: React.FC<FileTreeProps> = ({ fileStructure, onFileSelect, select
         <div className="panel-info">Directory Tree</div>
       </div>
       <div className="file-tree-content">
-        {renderFileItem(fileStructure)}
+        {renderFileItem(fileStructure, 0, rootItemIndex)}
       </div>
     </div>
   );

@@ -1,46 +1,40 @@
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* DOS/Norton Commander Styles */
-@import url('https://fonts.googleapis.com/css2?family=Courier+New:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
 
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Courier New', monospace;
-  background: #000055;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  background-color: #000080;
   color: #ffffff;
+  height: 100vh;
   overflow: hidden;
-  font-size: 14px;
-  line-height: 1.2;
 }
 
 .dos-interface {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #000055;
+  background-color: #000080;
 }
 
 .dos-header {
-  background: #0000aa;
-  color: #ffff55;
+  background-color: #008080;
+  color: #ffffff;
   padding: 4px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ffffff;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .dos-title {
-  font-size: 14px;
+  font-weight: bold;
 }
 
 .dos-time {
@@ -48,74 +42,77 @@ body {
 }
 
 .dos-panels {
-  flex: 1;
   display: flex;
-  background: #000055;
+  flex: 1;
+  height: calc(100vh - 60px);
 }
 
 .file-tree-panel,
 .content-panel {
   flex: 1;
+  border: 2px solid #ffffff;
+  margin: 2px;
+  background-color: #000080;
   display: flex;
   flex-direction: column;
-  border: 1px solid #ffffff;
-  margin: 2px;
 }
 
 .panel-header {
-  background: #0000aa;
-  color: #ffff55;
+  background-color: #008080;
+  color: #ffffff;
   padding: 4px 8px;
+  border-bottom: 1px solid #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ffffff;
   font-weight: bold;
   font-size: 12px;
 }
 
 .panel-title {
-  font-size: 14px;
+  font-weight: bold;
 }
 
 .panel-info {
   font-size: 10px;
-  color: #cccccc;
+  color: #c0c0c0;
 }
 
 .file-tree-content {
   flex: 1;
   overflow-y: auto;
-  background: #000055;
-  padding: 4px 0;
+  padding: 4px;
 }
 
 .file-item {
   display: flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 2px 4px;
   cursor: pointer;
   font-size: 12px;
-  color: #ffffff;
-  position: relative;
+  white-space: nowrap;
+  user-select: none;
 }
 
 .file-item:hover {
-  background: #000088;
-  color: #ffff55;
+  background-color: #0000ff;
+  color: #ffffff;
 }
 
 .file-item.selected {
-  background: #ffffff;
-  color: #000055;
+  background-color: #00ff00;
+  color: #000000;
 }
 
-.file-item.folder {
-  color: #55ff55;
+.file-item.focused {
+  background-color: #ffff00;
+  color: #000000;
+  outline: 1px dashed #000000;
 }
 
-.file-item.file {
-  color: #ffffff;
+.file-item.focused.selected {
+  background-color: #00ffff;
+  color: #000000;
 }
 
 .file-icon {
@@ -125,41 +122,58 @@ body {
 
 .file-name {
   flex: 1;
+  margin-right: 6px;
 }
 
 .folder-arrow {
   font-size: 8px;
-  color: #55ff55;
+  color: #c0c0c0;
+}
+
+.folder-children {
+  margin-left: 12px;
 }
 
 .content-area {
   flex: 1;
   overflow-y: auto;
-  background: #000055;
   padding: 8px;
+}
+
+.no-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #c0c0c0;
+}
+
+.no-content pre {
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .file-header {
   margin-bottom: 16px;
-  border-bottom: 1px solid #555555;
+  border-bottom: 1px solid #ffffff;
   padding-bottom: 8px;
 }
 
 .file-title {
-  color: #55ff55;
   font-size: 16px;
   font-weight: bold;
+  color: #00ff00;
   margin-bottom: 4px;
 }
 
 .file-subtitle {
-  color: #ffff55;
   font-size: 12px;
+  color: #ffff00;
 }
 
 .file-content {
-  color: #ffffff;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 .content-line {
@@ -168,59 +182,32 @@ body {
 }
 
 .line-number {
-  color: #555555;
+  color: #c0c0c0;
   margin-right: 8px;
-  user-select: none;
   font-size: 10px;
+  user-select: none;
 }
 
 .line-text {
-  color: #ffffff;
-  white-space: pre;
-}
-
-.no-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #555555;
+  flex: 1;
+  white-space: pre-wrap;
 }
 
 .dos-footer {
-  background: #0000aa;
-  color: #ffff55;
+  background-color: #008080;
+  color: #ffffff;
   padding: 4px 8px;
   border-top: 1px solid #ffffff;
   font-size: 11px;
+  text-align: center;
 }
 
 .dos-hotkeys {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #000055;
-  border: 1px solid #ffffff;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #0000aa;
-  border: 1px solid #ffffff;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #000088;
-}
-
-/* Mobile responsiveness */
+/* Мобильная адаптивность */
 @media (max-width: 768px) {
   .dos-panels {
     flex-direction: column;
@@ -232,95 +219,29 @@ body {
   
   .dos-hotkeys {
     font-size: 9px;
-    gap: 4px;
-  }
-  
-  .file-item {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-  
-  .content-line {
-    font-size: 11px;
   }
 }
 
-@media (max-width: 480px) {
-  .dos-header {
-    flex-direction: column;
-    gap: 2px;
-    padding: 2px 4px;
-  }
-  
-  .dos-title,
-  .dos-time {
-    font-size: 12px;
-  }
-  
-  .panel-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-  
-  .file-tree-panel {
-    max-height: 35vh;
-  }
+/* Скроллбары в стиле DOS */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
 }
 
-/* Анимации */
-.file-item {
-  transition: all 0.1s ease;
+::-webkit-scrollbar-track {
+  background-color: #c0c0c0;
+  border: 1px solid #000000;
 }
 
-.folder-children {
-  animation: slideDown 0.2s ease;
+::-webkit-scrollbar-thumb {
+  background-color: #808080;
+  border: 1px solid #000000;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 500px;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background-color: #404040;
 }
 
-/* Дополнительные цвета для специальных элементов */
-.content-line:contains("┌"),
-.content-line:contains("├"),
-.content-line:contains("└"),
-.content-line:contains("│"),
-.content-line:contains("╔"),
-.content-line:contains("╠"),
-.content-line:contains("╚"),
-.content-line:contains("║") {
-  color: #55ff55;
-}
-
-/* Прогресс-бары в навыках */
-.line-text:contains("████") {
-  color: #55ff55;
-}
-
-/* Email и ссылки */
-.line-text:contains("@"),
-.line-text:contains("http"),
-.line-text:contains(".com") {
-  color: #55ffff;
-}
-
-/* Эмодзи и иконки */
-.line-text:contains("📧"),
-.line-text:contains("📱"),
-.line-text:contains("💼"),
-.line-text:contains("🐙"),
-.line-text:contains("🏆"),
-.line-text:contains("⚡"),
-.line-text:contains("📊"),
-.line-text:contains("👨‍💼"),
-.line-text:contains("✓") {
-  color: #ffff55;
+::-webkit-scrollbar-corner {
+  background-color: #c0c0c0;
 }

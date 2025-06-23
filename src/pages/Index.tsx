@@ -1,11 +1,12 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import FileTree from '../components/FileTree';
 import ContentPanel from '../components/ContentPanel';
 import { FileItem } from '../types/FileTypes';
 
 const Index = () => {
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number>(0);
+  const [flatFileList, setFlatFileList] = useState<FileItem[]>([]);
 
   // Структура файлового дерева
   const fileStructure: FileItem = {
@@ -271,13 +272,58 @@ const Index = () => {
     ]
   };
 
-  React.useEffect(() => {
+  // Создаём плоский список всех файлов для навигации
+  const createFlatFileList = useCallback((item: FileItem, list: FileItem[] = []): FileItem[] => {
+    list.push(item);
+    if (item.children) {
+      item.children.forEach(child => createFlatFileList(child, list));
+    }
+    return list;
+  }, []);
+
+  useEffect(() => {
+    const flatList = createFlatFileList(fileStructure);
+    setFlatFileList(flatList);
+    
     // Устанавливаем readme.txt как файл по умолчанию
     const readmeFile = fileStructure.children?.find(item => item.name === 'readme.txt');
     if (readmeFile) {
       setSelectedFile(readmeFile);
+      const readmeIndex = flatList.findIndex(item => item.name === 'readme.txt');
+      setFocusedIndex(readmeIndex);
     }
-  }, []);
+  }, [fileStructure, createFlatFileList]);
+
+  // Обработка навигации с клавиатуры
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          setFocusedIndex(prev => Math.max(0, prev - 1));
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          setFocusedIndex(prev => Math.min(flatFileList.length - 1, prev + 1));
+          break;
+        case 'Enter':
+          event.preventDefault();
+          const focusedFile = flatFileList[focusedIndex];
+          if (focusedFile && focusedFile.type === 'file') {
+            setSelectedFile(focusedFile);
+          }
+          break;
+        case 'Escape':
+          event.preventDefault();
+          // Сброс фокуса на корневую папку
+          setFocusedIndex(0);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [flatFileList, focusedIndex]);
 
   return (
     <div className="dos-interface">
@@ -291,13 +337,16 @@ const Index = () => {
           fileStructure={fileStructure} 
           onFileSelect={setSelectedFile}
           selectedFile={selectedFile}
+          focusedIndex={focusedIndex}
+          onFocusChange={setFocusedIndex}
+          flatFileList={flatFileList}
         />
         <ContentPanel selectedFile={selectedFile} />
       </div>
       
       <div className="dos-footer">
         <div className="dos-hotkeys">
-          F1-Help F2-Rename F3-View F4-Edit F5-Copy F6-Move F7-MkDir F8-Delete F9-Menu F10-Quit
+          F1-Help F2-Rename F3-View F4-Edit F5-Copy F6-Move F7-MkDir F8-Delete F9-Menu F10-Quit | ↑↓-Navigate Enter-Select Esc-Reset
         </div>
       </div>
     </div>
