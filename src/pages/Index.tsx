@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import FileTree from '../components/FileTree';
 import ContentPanel from '../components/ContentPanel';
@@ -297,18 +298,29 @@ const Index = () => {
   // Обработка навигации с клавиатуры
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      console.log('Key pressed:', event.key, 'Current focus:', focusedIndex, 'File list length:', flatFileList.length);
+      
       switch (event.key) {
         case 'ArrowUp':
           event.preventDefault();
-          setFocusedIndex(prev => Math.max(0, prev - 1));
+          setFocusedIndex(prev => {
+            const newIndex = Math.max(0, prev - 1);
+            console.log('Moving up from', prev, 'to', newIndex);
+            return newIndex;
+          });
           break;
         case 'ArrowDown':
           event.preventDefault();
-          setFocusedIndex(prev => Math.min(flatFileList.length - 1, prev + 1));
+          setFocusedIndex(prev => {
+            const newIndex = Math.min(flatFileList.length - 1, prev + 1);
+            console.log('Moving down from', prev, 'to', newIndex);
+            return newIndex;
+          });
           break;
         case 'Enter':
           event.preventDefault();
           const focusedFile = flatFileList[focusedIndex];
+          console.log('Enter pressed on:', focusedFile);
           if (focusedFile && focusedFile.type === 'file') {
             setSelectedFile(focusedFile);
           }
