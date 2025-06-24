@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import FileTree from '../components/FileTree';
 import ContentPanel from '../components/ContentPanel';
@@ -274,16 +273,17 @@ const Index = () => {
   };
 
   // Создаём плоский список всех файлов для навигации
-  const createFlatFileList = useCallback((item: FileItem, list: FileItem[] = []): FileItem[] => {
+  const createFlatFileList = useCallback((item: FileItem, list: FileItem[] = [], expandedFolders: Set<string> = new Set(['C:\\RESUME'])): FileItem[] => {
     list.push(item);
-    if (item.children) {
-      item.children.forEach(child => createFlatFileList(child, list));
+    if (item.type === 'folder' && expandedFolders.has(item.name) && item.children) {
+      item.children.forEach(child => createFlatFileList(child, list, expandedFolders));
     }
     return list;
   }, []);
 
   useEffect(() => {
-    const flatList = createFlatFileList(fileStructure);
+    const expandedFolders = new Set(['C:\\RESUME']);
+    const flatList = createFlatFileList(fileStructure, [], expandedFolders);
     setFlatFileList(flatList);
     
     // Устанавливаем readme.txt как файл по умолчанию
