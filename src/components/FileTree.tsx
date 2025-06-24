@@ -9,6 +9,7 @@ interface FileTreeProps {
   focusedIndex: number;
   onFocusChange: (index: number) => void;
   flatFileList: FileItem[];
+  onExpandedChange: (expanded: Set<string>) => void;
 }
 
 const FileTree: React.FC<FileTreeProps> = ({ 
@@ -17,7 +18,8 @@ const FileTree: React.FC<FileTreeProps> = ({
   selectedFile, 
   focusedIndex, 
   onFocusChange,
-  flatFileList 
+  flatFileList,
+  onExpandedChange
 }) => {
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(new Set(['C:\\RESUME']));
 
@@ -29,11 +31,14 @@ const FileTree: React.FC<FileTreeProps> = ({
       newExpanded.add(folderName);
     }
     setExpandedFolders(newExpanded);
+    onExpandedChange(newExpanded);
   };
 
   const renderFileItem = (item: FileItem, depth: number = 0): JSX.Element => {
-    const itemIndex = flatFileList.findIndex(flatItem => flatItem.name === item.name && flatItem.type === item.type);
-    const isSelected = selectedFile?.name === item.name;
+    const itemIndex = flatFileList.findIndex(flatItem => 
+      flatItem.name === item.name && flatItem.type === item.type
+    );
+    const isSelected = selectedFile?.name === item.name && selectedFile?.type === item.type;
     const isFocused = focusedIndex === itemIndex;
     const isExpanded = expandedFolders.has(item.name);
     
@@ -47,7 +52,7 @@ const FileTree: React.FC<FileTreeProps> = ({
     };
 
     return (
-      <div key={`${item.name}-${item.type}`} className="file-tree-item">
+      <div key={`${item.name}-${item.type}-${depth}`} className="file-tree-item">
         <div
           className={`file-item ${isSelected ? 'selected' : ''} ${isFocused ? 'focused' : ''} ${item.type}`}
           style={{ paddingLeft: `${depth * 20 + 8}px` }}

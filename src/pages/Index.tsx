@@ -7,6 +7,7 @@ const Index = () => {
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [flatFileList, setFlatFileList] = useState<FileItem[]>([]);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['C:\\RESUME']));
 
   // Структура файлового дерева
   const fileStructure: FileItem = {
@@ -273,27 +274,43 @@ const Index = () => {
   };
 
   // Создаём плоский список всех файлов для навигации
-  const createFlatFileList = useCallback((item: FileItem, list: FileItem[] = [], expandedFolders: Set<string> = new Set(['C:\\RESUME'])): FileItem[] => {
+  const createFlatFileList = useCallback((item: FileItem, list: FileItem[] = [], expandedSet: Set<string>): FileItem[] => {
     list.push(item);
-    if (item.type === 'folder' && expandedFolders.has(item.name) && item.children) {
-      item.children.forEach(child => createFlatFileList(child, list, expandedFolders));
+    if (item.type === 'folder' && expandedSet.has(item.name) && item.children) {
+      item.children.forEach(child => createFlatFileList(child, list, expandedSet));
     }
     return list;
   }, []);
 
-  useEffect(() => {
-    const expandedFolders = new Set(['C:\\RESUME']);
+  // Обновляем плоский список при изменении развернутых папок
+  const updateFlatFileList = useCallback(() => {
     const flatList = createFlatFileList(fileStructure, [], expandedFolders);
     setFlatFileList(flatList);
+    console.log('Updated flat file list:', flatList.map(f => f.name));
+  }, [fileStructure, createFlatFileList, expandedFolders]);
+
+  useEffect(() => {
+    updateFlatFileList();
     
     // Устанавливаем readme.txt как файл по умолчанию
     const readmeFile = fileStructure.children?.find(item => item.name === 'readme.txt');
-    if (readmeFile) {
+    if (readmeFile && !selectedFile) {
       setSelectedFile(readmeFile);
-      const readmeIndex = flatList.findIndex(item => item.name === 'readme.txt');
-      setFocusedIndex(readmeIndex);
+      // Найдем индекс readme в обновленном списке
+      setTimeout(() => {
+        const flatList = createFlatFileList(fileStructure, [], expandedFolders);
+        const readmeIndex = flatList.findIndex(item => item.name === 'readme.txt' && item.type === 'file');
+        if (readmeIndex !== -1) {
+          setFocusedIndex(readmeIndex);
+        }
+      }, 0);
     }
-  }, [fileStructure, createFlatFileList]);
+  }, [expandedFolders, fileStructure, createFlatFileList, selectedFile, updateFlatFileList]);
+
+  // Обработка изменения развернутых папок
+  const handleExpandedChange = useCallback((newExpanded: Set<string>) => {
+    setExpandedFolders(newExpanded);
+  }, []);
 
   // Обработка навигации с клавиатуры
   useEffect(() => {
@@ -321,13 +338,23 @@ const Index = () => {
           event.preventDefault();
           const focusedFile = flatFileList[focusedIndex];
           console.log('Enter pressed on:', focusedFile);
-          if (focusedFile && focusedFile.type === 'file') {
-            setSelectedFile(focusedFile);
+          if (focusedFile) {
+            if (focusedFile.type === 'file') {
+              setSelectedFile(focusedFile);
+            } else if (focusedFile.type === 'folder') {
+              // Переключаем состояние папки
+              const newExpanded = new Set(expandedFolders);
+              if (newExpanded.has(focusedFile.name)) {
+                newExpanded.delete(focusedFile.name);
+              } else {
+                newExpanded.add(focusedFile.name);
+              }
+              setExpandedFolders(newExpanded);
+            }
           }
           break;
         case 'Escape':
           event.preventDefault();
-          // Сброс фокуса на корневую папку
           setFocusedIndex(0);
           break;
       }
@@ -335,7 +362,7 @@ const Index = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flatFileList, focusedIndex]);
+  }, [flatFileList, focusedIndex, expandedFolders]);
 
   return (
     <div className="dos-interface">
@@ -352,6 +379,7 @@ const Index = () => {
           focusedIndex={focusedIndex}
           onFocusChange={setFocusedIndex}
           flatFileList={flatFileList}
+          onExpandedChange={handleExpandedChange}
         />
         <ContentPanel selectedFile={selectedFile} />
       </div>
