@@ -349,7 +349,14 @@ const Index = () => {
               } else {
                 newExpanded.add(focusedFile.name);
               }
+              console.log('Toggling folder:', focusedFile.name, 'New expanded:', newExpanded);
               setExpandedFolders(newExpanded);
+              // Обновляем плоский список после изменения состояния папки
+              setTimeout(() => {
+                const newFlatList = createFlatFileList(fileStructure, [], newExpanded);
+                setFlatFileList(newFlatList);
+                console.log('Updated flat list after folder toggle:', newFlatList.map(f => f.name));
+              }, 0);
             }
           }
           break;
@@ -362,7 +369,7 @@ const Index = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flatFileList, focusedIndex, expandedFolders]);
+  }, [flatFileList, focusedIndex, expandedFolders, fileStructure, createFlatFileList]);
 
   return (
     <div className="dos-interface">
