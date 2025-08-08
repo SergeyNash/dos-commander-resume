@@ -56,16 +56,3 @@ const parseMarkdownToLines = (markdown: string): string[] => {
   
   return result;
 };
-
-export const loadRawMarkdown = async (filePath: string): Promise<string> => {
-  try {
-    const response = await fetch(filePath);
-    if (!response.ok) {
-      throw new Error(`Failed to load ${filePath}`);
-    }
-    return await response.text();
-  } catch (error) {
-    console.error('Error loading markdown file:', error);
-    return 'Ошибка загрузки файла';
-  }
-};
