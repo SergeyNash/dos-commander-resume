@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import FileTree from '../components/FileTree';
 import ContentPanel from '../components/ContentPanel';
 import { FileItem } from '../types/FileTypes';
+import { loadMarkdownFile } from '../utils/markdownLoader';
 
 const Index = () => {
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
@@ -49,27 +50,7 @@ const Index = () => {
             content: {
               title: 'POSITIVE TECHNOLOGIES',
               subtitle: 'Product Owner (2023 - настоящее время)',
-              items: [
-                '┌─ Управление продуктом ─┐',
-                '│ • Руководство 5+ командами (7-12 человек)        │',
-                '│ • Стратегическое планирование продукта           │',
-                '│ • Приоритизация backlog и roadmap                │',
-                '│                                                  │',
-                '├─ Методологии ─┤',
-                '│ • Agile/Scrum процессы                          │',
-                '│ • SAFe framework                                │',
-                '│ • Lean Startup подходы                          │',
-                '│                                                  │',
-                '├─ Архитектурные решения ─┤',
-                '│ • Secure by Design принципы                     │',
-                '│ • Построение дерева метрик                      │',
-                '│ • API-first подход                              │',
-                '│                                                  │',
-                '└─ Результаты ─┘',
-                '  ✓ Запуск 3 новых продуктов',
-                '  ✓ Рост MAU на 150%',
-                '  ✓ Сокращение Time to Market на 40%'
-              ]
+              items: [] // Будет загружено асинхронно
             }
           },
           {
@@ -78,27 +59,7 @@ const Index = () => {
             content: {
               title: 'ИНГОССТРАХ',
               subtitle: 'Senior Product Manager (2021-2023)',
-              items: [
-                '┌─ Цифровая трансформация ─┐',
-                '│ • Переход на digital-first подход                │',
-                '│ • Омниканальная стратегия                        │',
-                '│ • Customer Journey Mapping                       │',
-                '│                                                  │',
-                '├─ Управление командой ─┤',
-                '│ • 15+ разработчиков                             │',
-                '│ • Cross-functional teams                        │',
-                '│ • Agile transformation                          │',
-                '│                                                  │',
-                '├─ Продуктовые инициативы ─┤',
-                '│ • Мобильное приложение (iOS/Android)            │',
-                '│ • CRM система                                   │',
-                '│ • Автоматизация андеррайтинга                   │',
-                '│                                                  │',
-                '└─ Достижения ─┘',
-                '  ✓ NPS вырос с 6 до 47',
-                '  ✓ Конверсия увеличилась на 85%',
-                '  ✓ Снижение операционных расходов на 25%'
-              ]
+              items: [] // Будет загружено асинхронно
             }
           },
           {
@@ -107,27 +68,7 @@ const Index = () => {
             content: {
               title: 'АНТРАКС ГРУПП',
               subtitle: 'Product Manager (2019-2021)',
-              items: [
-                '┌─ Стартап среда ─┐',
-                '│ • От идеи до MVP за 6 месяцев                    │',
-                '│ • Lean методология                              │',
-                '│ • Customer Development                          │',
-                '│                                                  │',
-                '├─ Построение продукта ─┤',
-                '│ • Валидация гипотез                             │',
-                '│ • A/B тестирование                              │',
-                '│ • Метрики качества                              │',
-                '│                                                  │',
-                '├─ Технические навыки ─┤',
-                '│ • SQL, Python basics                           │',
-                '│ • Analytics (GA, Mixpanel)                     │',
-                '│ • Wireframing & Prototyping                    │',
-                '│                                                  │',
-                '└─ Результаты ─┘',
-                '  ✓ Привлечение $2M инвестиций',
-                '  ✓ 50K+ активных пользователей',
-                '  ✓ LTV/CAC ratio = 4.2'
-              ]
+              items: [] // Будет загружено асинхронно
             }
           }
         ]
@@ -282,6 +223,21 @@ const Index = () => {
     return list;
   }, []);
 
+  // Функция для загрузки контента из md файлов
+  const loadFileContent = useCallback(async (file: FileItem) => {
+    if (file.type === 'file' && file.name.endsWith('.log') && file.content) {
+      const fileName = file.name.replace('.log', '');
+      try {
+        const items = await loadMarkdownFile(`/experience/${fileName}.md`);
+        // Обновляем контент файла
+        file.content.items = items;
+      } catch (error) {
+        console.error('Error loading markdown:', error);
+        file.content.items = ['Ошибка загрузки файла'];
+      }
+    }
+  }, []);
+
   // Обновляем плоский список при изменении развернутых папок
   const updateFlatFileList = useCallback(() => {
     const flatList = createFlatFileList(fileStructure, [], expandedFolders);
@@ -312,6 +268,12 @@ const Index = () => {
     setExpandedFolders(newExpanded);
   }, []);
 
+  // Обработчик выбора файла с загрузкой md контента
+  const handleFileSelect = useCallback(async (file: FileItem) => {
+    await loadFileContent(file);
+    setSelectedFile(file);
+  }, [loadFileContent]);
+
   // Обработка навигации с клавиатуры
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -340,7 +302,7 @@ const Index = () => {
           console.log('Enter pressed on:', focusedFile);
           if (focusedFile) {
             if (focusedFile.type === 'file') {
-              setSelectedFile(focusedFile);
+              handleFileSelect(focusedFile);
             } else if (focusedFile.type === 'folder') {
               // Переключаем состояние папки
               const newExpanded = new Set(expandedFolders);
@@ -369,7 +331,7 @@ const Index = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flatFileList, focusedIndex, expandedFolders, fileStructure, createFlatFileList]);
+  }, [flatFileList, focusedIndex, expandedFolders, fileStructure, createFlatFileList, handleFileSelect]);
 
   return (
     <div className="dos-interface">
@@ -381,7 +343,7 @@ const Index = () => {
       <div className="dos-panels">
         <FileTree 
           fileStructure={fileStructure} 
-          onFileSelect={setSelectedFile}
+          onFileSelect={handleFileSelect}
           selectedFile={selectedFile}
           focusedIndex={focusedIndex}
           onFocusChange={setFocusedIndex}
