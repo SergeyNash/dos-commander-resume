@@ -53,12 +53,27 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ selectedFile }) => {
         
         <div className="file-content">
           <pre>
-            {items.map((line, index) => (
-              <div key={index} className="content-line">
-                <span className="line-number">{String(index + 1).padStart(3, '0')}:</span>
-                <span className="line-text">{line}</span>
-              </div>
-            ))}
+            {items.map((line, index) => {
+              const isImage = line.startsWith('IMG:');
+              if (isImage) {
+                const payload = line.substring(4).trim();
+                const [srcRaw, altRaw] = payload.split('|');
+                const src = (srcRaw || '').trim();
+                const alt = ((altRaw || '').trim()) || 'Фото';
+                return (
+                  <div key={index} className="content-line">
+                    <span className="line-number">{String(index + 1).padStart(3, '0')}:</span>
+                    <img src={src} alt={alt} loading="lazy" />
+                  </div>
+                );
+              }
+              return (
+                <div key={index} className="content-line">
+                  <span className="line-number">{String(index + 1).padStart(3, '0')}:</span>
+                  <span className="line-text">{line}</span>
+                </div>
+              );
+            })}
           </pre>
         </div>
       </div>

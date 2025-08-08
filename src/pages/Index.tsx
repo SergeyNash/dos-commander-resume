@@ -21,21 +21,23 @@ const Index = () => {
         type: 'file',
         content: {
           title: 'README.TXT',
-          subtitle: 'Системная информация',
+          subtitle: 'Биография',
           items: [
-            'Добро пожаловать в файловую систему резюме',
-            'Используйте левую панель для навигации',
-            'Выберите файл для просмотра содержимого',
+            'IMG:/placeholder.svg|Фото Сергея Синякова',
             '',
-            'Сергей Синяков - Product Owner',
-            'Опыт: 5+ лет в IT',
-            'Команды: 7-12 человек под управлением',
+            'Сергей Синяков — Product Owner / Product Manager.',
+            '5+ лет в IT, запуск 3+ продуктов, рост MAU на 150%.',
+            'Управление 5+ командами (7–12 человек), Agile/Scrum, SAFe.',
             '',
-            'Навигация:',
-            '  /experience/ - Опыт работы',
-            '  skills.txt   - Навыки и компетенции',
-            '  achievements.txt - Достижения',
-            '  /contacts/   - Контактная информация'
+            'Фокус:',
+            '  • Продуктовая стратегия и метрики',
+            '  • API‑first, Secure by Design',
+            '  • Исследования пользователей и приоритизация',
+            '',
+            'Контакты:',
+            '  • Email: sergey@pm-hero.com',
+            '  • Telegram: @sergey_sinyakov',
+            '  • LinkedIn: linkedin.com/in/sergey-sinyakov'
           ]
         }
       },
