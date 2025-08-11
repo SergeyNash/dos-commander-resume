@@ -1,6 +1,8 @@
 README.TXT
 ===============================================================================
 
+IMG:/photo.png|Фотография разработчика
+
 ПЕРСОНАЛЬНАЯ ИНФОРМАЦИЯ
 -----------------------
 Имя:           Алексей Петров  
@@ -9,8 +11,6 @@ README.TXT
 Email:         alex.petrov@example.com
 GitHub:        github.com/alexpetrov
 LinkedIn:      linkedin.com/in/alexpetrov
-
-IMG:/photo.png|Фотография разработчика
 
 КРАТКАЯ БИОГРАФИЯ
 -----------------
