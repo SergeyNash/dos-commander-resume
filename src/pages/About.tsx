@@ -1,11 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ArrowLeft, Mail, MessageCircle, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const About = () => {
+  const canonicalUrl = typeof window !== "undefined" ? `${window.location.origin}/about` : "/about";
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background" role="main">
+      <Helmet>
+        <title>About — Сергей Синяков | Product Owner</title>
+        <meta name="description" content="Био Сергея Синякова: Product Owner / Product Manager с 5+ лет в IT. Фото и краткая биография." />
+        <link rel="canonical" href={canonicalUrl} />
+      </Helmet>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link to="/">
           <Button variant="ghost" className="mb-6">
@@ -19,11 +27,15 @@ const About = () => {
           <div className="md:col-span-1">
             <Card>
               <CardContent className="p-6">
-                <img 
-                  src="/photo.png" 
-                  alt="Сергей Синяков"
-                  className="w-full rounded-lg shadow-lg"
-                />
+                <AspectRatio ratio={1}>
+                  <img 
+                    src="/photo.png" 
+                    alt="Фото Сергея Синякова — Product Owner"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full rounded-lg object-cover"
+                  />
+                </AspectRatio>
               </CardContent>
             </Card>
           </div>
@@ -93,7 +105,7 @@ const About = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
