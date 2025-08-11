@@ -20,6 +20,23 @@ const Index = () => {
     isExpanded: true,
     children: [
       {
+        name: 'about.txt',
+        type: 'file',
+        content: {
+          title: 'ABOUT.TXT',
+          subtitle: 'Обо мне',
+          items: [
+            'IMG:/photo.png|Фото Сергея Синякова',
+            '',
+            'Сергей Синяков — Product Owner / Product Manager.',
+            '5+ лет опыта в IT, запуск 3+ продуктов, рост MAU на 150%.',
+            'Управлял кросс‑функциональными командами (7–12 человек).',
+            '',
+            'Фокус: стратегия, метрики, API‑first, Secure by Design.'
+          ]
+        }
+      },
+      {
         name: 'experience',
         type: 'folder',
         isExpanded: false,
@@ -228,6 +245,25 @@ const Index = () => {
   useEffect(() => {
     updateFlatFileList();
   }, [expandedFolders, fileStructure, createFlatFileList, updateFlatFileList]);
+
+  // Устанавливаем about.txt как файл по умолчанию
+  useEffect(() => {
+    if (!selectedFile) {
+      const aboutFile = fileStructure.children?.find(
+        (item) => item.type === 'file' && item.name.toLowerCase() === 'about.txt'
+      );
+      if (aboutFile) {
+        setSelectedFile(aboutFile);
+        setTimeout(() => {
+          const flatList = createFlatFileList(fileStructure, [], expandedFolders);
+          const aboutIndex = flatList.findIndex(
+            (item) => item.type === 'file' && item.name.toLowerCase() === 'about.txt'
+          );
+          if (aboutIndex !== -1) setFocusedIndex(aboutIndex);
+        }, 0);
+      }
+    }
+  }, [selectedFile, fileStructure, expandedFolders, createFlatFileList]);
 
   // Обработка изменения развернутых папок
   const handleExpandedChange = useCallback((newExpanded: Set<string>) => {
