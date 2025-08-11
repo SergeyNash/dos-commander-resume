@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { User } from 'lucide-react';
 import FileTree from '../components/FileTree';
 import ContentPanel from '../components/ContentPanel';
 import { FileItem } from '../types/FileTypes';
@@ -301,6 +304,12 @@ const Index = () => {
       <div className="dos-header">
         <div className="dos-title">Norton Commander v2.0 - Resume Explorer</div>
         <div className="dos-time">{new Date().toLocaleString()}</div>
+        <Link to="/about">
+          <Button variant="ghost" size="sm" className="absolute top-4 right-4">
+            <User className="w-4 h-4 mr-2" />
+            О себе
+          </Button>
+        </Link>
       </div>
       
       <div className="dos-panels">
