@@ -17,31 +17,6 @@ const Index = () => {
     isExpanded: true,
     children: [
       {
-        name: 'readme.txt',
-        type: 'file',
-        content: {
-          title: 'README.TXT',
-          subtitle: 'Биография',
-          items: [
-            'IMG:/placeholder.svg|Фото Сергея Синякова',
-            '',
-            'Сергей Синяков — Product Owner / Product Manager.',
-            '5+ лет в IT, запуск 3+ продуктов, рост MAU на 150%.',
-            'Управление 5+ командами (7–12 человек), Agile/Scrum, SAFe.',
-            '',
-            'Фокус:',
-            '  • Продуктовая стратегия и метрики',
-            '  • API‑first, Secure by Design',
-            '  • Исследования пользователей и приоритизация',
-            '',
-            'Контакты:',
-            '  • Email: sergey@pm-hero.com',
-            '  • Telegram: @sergey_sinyakov',
-            '  • LinkedIn: linkedin.com/in/sergey-sinyakov'
-          ]
-        }
-      },
-      {
         name: 'experience',
         type: 'folder',
         isExpanded: false,
@@ -249,21 +224,7 @@ const Index = () => {
 
   useEffect(() => {
     updateFlatFileList();
-    
-    // Устанавливаем readme.txt как файл по умолчанию
-    const readmeFile = fileStructure.children?.find(item => item.name === 'readme.txt');
-    if (readmeFile && !selectedFile) {
-      setSelectedFile(readmeFile);
-      // Найдем индекс readme в обновленном списке
-      setTimeout(() => {
-        const flatList = createFlatFileList(fileStructure, [], expandedFolders);
-        const readmeIndex = flatList.findIndex(item => item.name === 'readme.txt' && item.type === 'file');
-        if (readmeIndex !== -1) {
-          setFocusedIndex(readmeIndex);
-        }
-      }, 0);
-    }
-  }, [expandedFolders, fileStructure, createFlatFileList, selectedFile, updateFlatFileList]);
+  }, [expandedFolders, fileStructure, createFlatFileList, updateFlatFileList]);
 
   // Обработка изменения развернутых папок
   const handleExpandedChange = useCallback((newExpanded: Set<string>) => {
